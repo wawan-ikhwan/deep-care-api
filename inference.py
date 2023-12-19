@@ -1,4 +1,7 @@
 def get_inference_result(modelInput: dict):
+
+  # PROCESS MODEL INPUT HERE...
+
   # DUMMY MODEL OUTPUT, REPLACE LATER
   modelOutput = [
       {
