@@ -1,8 +1,5 @@
 #/bin/bash
 
-# Update Repo
-git pull &&
-
 # Build Image
 pack build deepcare_image --builder gcr.io/buildpacks/builder:v1 --path . &&
 
