@@ -48,7 +48,7 @@ async def register(request: Request):
   except Exception as e:
     #If there is any error, redirect to register
     return {
-              "error": False,
+              "error": True,
               "message": str(e)
             }
   
@@ -75,14 +75,16 @@ async def login(request: Request):
                 "name": name,
                 "userId": userId,
                 "token": token
-              }
+              },
+              "isLogin": True
             }
   except Exception as e:
       #If there is any error, redirect back to login
       return  {
-                "error": False,
+                "error": True,
                 "message": str(e),
-                "loginResult": None
+                "loginResult": None,
+                "isLogin": False
               }
 
 @app.post("/inference")
@@ -136,7 +138,7 @@ async def inference(request: Request):
     }
   except Exception as e:
     return  {
-              "error": False,
+              "error": True,
               "message": str(e)
             }
 
