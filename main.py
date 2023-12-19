@@ -2,6 +2,7 @@ from fastapi import FastAPI, Request
 import pyrebase
 import os
 from dotenv import load_dotenv
+from time import time
 from inference import get_inference_result
 
 load_dotenv()
@@ -88,24 +89,56 @@ async def login(request: Request):
 async def inference(request: Request):
   body = await request.json()
   try:
+    # get current timestamp for this request
+    current_timestamp = get_current_timestamp()
+
+    # get body payload
     admissionId = body["admission_id"]
-    token = body["token"] # jwtToken
+    token = body["token"] # jwtToken idToken
     modelInput = body["model_input"] # dictionary
+
+    # validate token
     userInfo = auth.get_account_info(token)
     userId = userInfo['users'][0]['localId']
 
+    # get name by token
     data = db.child("users").get()
     name = data.val()[userId]["name"]
 
-    modelOutput = get_inference_result(modelInput)
+
+    # store model input to the database
+    db.child("admissions").child(admissionId).child(current_timestamp).child('model_input').set(modelInput)
+
+    # get model input list
+    model_input_list = []
+    for key, value in db.child("admissions").child(admissionId).get().val().items():
+      current_modelInput = value.get("model_input", {})
+      current_modelInput['timestamp'] = key
+      model_input_list.append(current_modelInput)
+
+    # do inference
+    modelOutput = get_inference_result(model_input_list)
+
+    # store model output to the database
+    db.child("admissions").child(admissionId).child(current_timestamp).child('model_output').set(modelOutput)
+
+    # get model output list
+    model_output_list = []
+    for key, value in db.child("admissions").child(admissionId).get().val().items():
+      current_modelOutput = value.get("model_output", {})
+      current_modelOutput['timestamp'] = key
+      model_output_list.append(current_modelOutput)
 
     return {
       "admission_id": admissionId,
       "caregiver": name,
-      "model_output": modelOutput
+      "model_output":  model_output_list
     }
   except Exception as e:
     return  {
               "error": False,
               "message": str(e)
             }
+
+def get_current_timestamp() -> int:
+  return int(time())

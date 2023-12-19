@@ -2,3 +2,6 @@ fastapi==0.65.1
 uvicorn==0.13.4
 pyrebase4
 python-dotenv
+pandas
+numpy
+tensorflow
