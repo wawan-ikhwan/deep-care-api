@@ -4,7 +4,7 @@
 git pull &&
 
 # Build Image
-pack build --builder gcr.io/buildpacks/builder:v1 --path . deepcare-image &&
+pack build deepcare-image --builder gcr.io/buildpacks/builder:v1 --path . &&
 
 # Push to GCR
 gcloud auth configure-docker &&
