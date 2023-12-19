@@ -74,9 +74,9 @@ async def login(request: Request):
               "loginResult": {
                 "name": name,
                 "userId": userId,
-                "token": token
+                "token": token,
+                "isLogin": True
               },
-              "isLogin": True
             }
   except Exception as e:
       #If there is any error, redirect back to login
@@ -84,7 +84,6 @@ async def login(request: Request):
                 "error": True,
                 "message": str(e),
                 "loginResult": None,
-                "isLogin": False
               }
 
 @app.post("/inference")
