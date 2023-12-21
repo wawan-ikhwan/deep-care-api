@@ -19,17 +19,24 @@ def list_of_dict_to_dataframe(data:list[dict], colnames: list[str], time_colname
   konversi dari fitur-fitur model input dengan timestampnya ke dataframe di mana timestamp menjadi indeks
   '''
 
+  # Initialize DataFrame with 24 rows
+  # print(data[0][time_colname])
+  # start_time = pd.to_datetime(int(data[0][time_colname]), unit='s')
+  # df = pd.DataFrame(index=pd.date_range(start_time, periods=24, freq='H'), columns=colnames)
+
   df = pd.DataFrame(columns=colnames)
 
   if time_colname not in colnames:
     colnames.append(time_colname)
+  
+  print(df)
 
   for d in data:
     d_filtered = {key: d[key] for key in d if key in colnames}
     df = pd.concat([df, pd.DataFrame([d_filtered])], ignore_index=True)
     
   # Convert the "timestamp" column to datetime format
-  df[time_colname] = pd.to_datetime(df[time_colname].astype(int), unit='s')
+  df[time_colname] = pd.to_datetime(df[time_colname].astype('int64'), unit='s')
   df.set_index(time_colname, inplace=True)
   df.sort_index(inplace=True)
 
@@ -40,12 +47,12 @@ def list_of_dict_to_dataframe(data:list[dict], colnames: list[str], time_colname
   return df
 
 #@title Define Resample, Interpolate, Backward/Forward Fill Function
-def resample_interpolate_bffill(df, date_colname = 'charttime'):
+def resample_interpolate_fbfill(df, date_colname = 'charttime'):
   try:
     ret = df.set_index(date_colname)
   except:
     ret = df
-  ret = ret.resample('1s').bfill().interpolate()
+  ret = ret.resample('1s').interpolate()
   ret = ret.bfill()
   ret = ret.ffill()
   ret = ret.resample('1H').bfill().ffill()
@@ -89,9 +96,13 @@ def preprocess_model_input(modelInput, feature_names, time_colname = 'timestamp'
   global df_default_value
 
   df = list_of_dict_to_dataframe(modelInput, feature_names, time_colname)
-  df = resample_interpolate_bffill(df, date_colname = 'timestamp')
-  df = get_default_value(df, df_default_value)
-  df = fix_shape_to_24(df)
+  df.to_csv('./temp/temp1.csv')
+  df = resample_interpolate_fbfill(df.copy(), date_colname = 'timestamp')
+  df.to_csv('./temp/temp2.csv')
+  df = get_default_value(df.copy(), df_default_value)
+  df.to_csv('./temp/temp3.csv')
+  df = fix_shape_to_24(df.copy())
+  df.to_csv('./temp/temp4.csv')
   nparr = df.values
   nparr = nparr.reshape(1, nparr.shape[0], nparr.shape[1])
   print(nparr.shape)
@@ -120,8 +131,8 @@ def get_inference_result(modelInput: list[dict]) -> dict:
   # print(y_pred_los, y_pred_mor)
 
   modelOutput = {
-    "mortality": int(y_pred_mor*100),
-    "los": int(y_pred_los*100),
+    "mortality": round(float(y_pred_mor*100),2),
+    "los": round(float(y_pred_los*100),2),
     "readmission": None
   }
   return modelOutput

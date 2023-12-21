@@ -3,3 +3,7 @@
 __pycache__
 schemes/
 foo.py
+json_process.py
+original_data.json
+poster.py
+restructured_data.json

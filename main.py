@@ -4,6 +4,7 @@ import os
 from dotenv import load_dotenv
 from time import time
 from inference import get_inference_result
+import json
 
 load_dotenv()
 
@@ -89,9 +90,16 @@ async def login(request: Request):
 @app.post("/inference")
 async def inference(request: Request):
   body = await request.json()
+
+  # get current timestamp for this request
+  current_timestamp = get_current_timestamp()
+  if 'timestamp' in body:
+    try:
+      current_timestamp = int(body['timestamp'])
+    except:
+      pass
+
   try:
-    # get current timestamp for this request
-    current_timestamp = get_current_timestamp()
 
     # get body payload
     admissionId = body["admission_id"]
@@ -106,7 +114,6 @@ async def inference(request: Request):
     data = db.child("users").get()
     name = data.val()[userId]["name"]
 
-
     # store model input to the database
     db.child("admissions").child(admissionId).child(current_timestamp).child('model_input').set(modelInput)
 
@@ -116,6 +123,9 @@ async def inference(request: Request):
       current_modelInput = value.get("model_input", {})
       current_modelInput['timestamp'] = key
       model_input_list.append(current_modelInput)
+
+    # debug
+    json.dumps(model_input_list)
 
     # do inference
     modelOutput = get_inference_result(model_input_list)
