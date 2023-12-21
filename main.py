@@ -23,7 +23,7 @@ db = firebase.database()
 
 @app.get("/")
 async def root():
-  return {"message": "Hello World"}
+  return {"message": "Deepcare API is ready!"}
 
 @app.post("/register") #Only listen to POST
 async def register(request: Request):
