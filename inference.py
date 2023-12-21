@@ -7,12 +7,22 @@ df_default_value = pd.read_csv('./utils/default-value.csv')
 
 # load column names
 colnames = np.load('./utils/feature_cols.npy', allow_pickle=True).reshape(1,-1)[0].tolist()
-feature_names = [colname.split('_')[1] for colname in colnames] # ambil tengah-tengah (NAME) pada lab_NAME_521
+feature_names = [colname.split('_')[1] for colname in colnames] # ambil tengah-tengah (NAME) pada NAME_521
 print(feature_names)
+
+# load column names
+feature_names_readm = ['calculatedbicarbonatewholeblood', 'oxygen',
+       'po2', 'bilirubintotal', 'creatinine',
+       'potassium', 'sodium', 'ureanitrogen',
+       'hematocrit', 'plateletcount', 'wbccount',
+       'heartrate', 'arterialbloodpressuremean',
+       'noninvasivebloodpressuresystolic',
+       'respiratoryrate', 'temperaturefahrenheit']
 
 # load model here
 model_los = tf.keras.models.load_model('./utils/model_los')
 model_mor = tf.keras.models.load_model('./utils/model_mor')
+model_rea = tf.keras.models.load_model('./utils/model_readm')
 
 def list_of_dict_to_dataframe(data:list[dict], colnames: list[str], time_colname='timestamp'):
   '''
@@ -120,20 +130,21 @@ def preprocess_model_input(modelInput, feature_names, time_colname = 'timestamp'
 # print(preprocess_model_input(data, feature_names, 'timestamp'))
 
 def get_inference_result(modelInput: list[dict]) -> dict:
-  global feature_names, model_los, model_mor
+  global feature_names, model_los, model_mor, model_rea, feature_names_readm
   # Preprocess model input here...
   X_pred = preprocess_model_input(modelInput, feature_names, 'timestamp')
+
+  X_pred_readm = preprocess_model_input(modelInput, feature_names_readm, 'timestamp')
 
   # Inference here...
   y_pred_los = model_los.predict(X_pred)[0]
   y_pred_mor = model_mor.predict(X_pred)[0]
-
-  # print(y_pred_los, y_pred_mor)
+  y_pred_rea = model_rea.predict(X_pred_readm)[0]
 
   modelOutput = {
-    "mortality": round(float(y_pred_mor*100),2),
-    "los": round(float(y_pred_los*100),2),
-    "readmission": None
+    "mortality": round(float(y_pred_mor*100), 2),
+    "los": round(float(y_pred_los*100), 2),
+    "readmission": round(float(y_pred_rea*100), 2)
   }
   return modelOutput
 
