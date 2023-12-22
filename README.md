@@ -13,7 +13,7 @@ Welcome to the Deepcare API! This API offers predictive analytics for healthcare
 
 - **Mortality in Hospital Probability:** Predict the likelihood of mortality during a patient's hospital stay.
 
-These predictions are based on advanced machine learning models trained on comprehensive healthcare datasets.
+These predictions are based on advanced deep learning models trained on comprehensive healthcare datasets.
 
 ## Documentation
 
