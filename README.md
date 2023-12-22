@@ -7,11 +7,11 @@
 
 Welcome to the Deepcare API! This API offers predictive analytics for healthcare outcomes, providing probabilities for specific patient scenarios, including:
 
-- **Readmission Probability (within 30 days):** This endpoint predicts the likelihood of a patient being readmitted within 30 days of discharge.
+- **Readmission Probability (within 30 days) in %:** This endpoint predicts the likelihood of a patient being readmitted within 30 days of discharge.
 
-- **Prolonged Length of Stay Probability (greater than 4 days):** Determine the probability of a patient having an extended hospital stay beyond 4 days.
+- **Prolonged Length of Stay Probability (greater than 4 days) in %:** Determine the probability of a patient having an extended hospital stay beyond 4 days.
 
-- **Mortality in Hospital Probability:** Predict the likelihood of mortality during a patient's hospital stay.
+- **Mortality in Hospital Probability in %:** Predict the likelihood of mortality during a patient's hospital stay.
 
 These predictions are based on advanced deep learning models trained on comprehensive healthcare datasets.
 
