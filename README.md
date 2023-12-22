@@ -122,10 +122,34 @@ Before using Deepcare API, ensure you have the following in `requirements.txt`
 
 ### Installation
 
-To install the Deepcare API SDK, run the following command:
-```shell
-pip install -r requirements.txt
-```
+To install the Deepcare API SDK, follow these steps:
+
+1. **Create a Virtual Environment:**
+
+   ```bash
+   python -m venv .venv
+   ```
+
+2. **Activate the Virtual Environment:**
+    * On Windows:
+    ```powershell
+    .venv\Scripts\activate
+    ```
+    * On Linux:
+    ```bash
+    source .venv/bin/activate
+    ```
+3. **Install Dependencies:**
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+4. **Copy Environment Variables:**
+    ```
+    cp .env.example .env
+    ```
+    Modify the values in the .env file according to your API configuration.
+
 ## Support
 If you encounter any issues or have questions, reach out to our support team at [ch2-ps589@bangkit.academy@bangkit.academy](ch2-ps589@bangkit.academy@bangkit.academy)
 
