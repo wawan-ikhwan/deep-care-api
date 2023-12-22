@@ -71,7 +71,7 @@ To access Deepcare API, follow the authentication flow:
     }
     ```
 
-3. **Healthcare Outcome Inference**: Use the POST /inference endpoint to perform healthcare outcome inference.
+3. **Healthcare Outcome Inference**: Use the `POST /inference` endpoint to perform healthcare outcome inference.
 
     Example Inference Request:
     ```json
