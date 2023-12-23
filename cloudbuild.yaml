@@ -1,0 +1,7 @@
+steps:
+- name: 'gcr.io/k8s-skaffold/pack'
+  args: ['build', 'deepcare_image', '--builder', 'gcr.io/buildpacks/builder:v1', '--path', '.']
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['tag', 'deepcare_image', 'gcr.io/deep-care-capstone/deepcare_image:latest']
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'gcr.io/deep-care-capstone/deepcare_image:latest']
