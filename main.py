@@ -161,7 +161,7 @@ async def get_inference_data(admission_id: str):
     model_output_list = []
     for key, value in db.child("admissions").child(admission_id).get().val().items():
       current_modelInput = value.get("model_input", {})
-      current_modelInput['timestamp'] = datetime.utcfromtimestamp(key)
+      current_modelInput['timestamp'] = datetime.utcfromtimestamp(int(key))
       model_output_list.append(current_modelInput)
     return {
       "admission_id": admission_id,
