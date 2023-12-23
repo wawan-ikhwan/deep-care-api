@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from time import time
 from inference import get_inference_result
 import json
+import re
 from datetime import datetime
 
 load_dotenv()
@@ -59,13 +60,13 @@ async def register(request: Request):
 async def login(request: Request):
   body = await request.json()
   try:
-    email = body["email"]
-    password = body["password"]
+    email = body['email']
+    password = body['password']
 
     user = auth.sign_in_with_email_and_password(email, password)
 
     token = user['idToken']
-    userId = user["localId"]
+    userId = user['localId']
     #Get the name of the user
     data = db.child("users").get()
     name = data.val()[userId]["name"]
@@ -103,7 +104,7 @@ async def inference(request: Request):
   try:
 
     # get body payload
-    admissionId = body["admission_id"]
+    admissionId = filter_string(str(body["admission_id"])).encode('ascii')
     token = body["token"] # jwtToken idToken
     modelInput = body["model_input"] # dictionary
 
@@ -154,6 +155,8 @@ async def inference(request: Request):
 
 @app.get("/inference/{admission_id}")
 async def get_inference_data(admission_id: str):
+
+  admission_id = filter_string(admission_id)
   try:
     model_output_list = []
     for key, value in db.child("admissions").child(admission_id).get().val().items():
@@ -172,3 +175,15 @@ async def get_inference_data(admission_id: str):
 
 def get_current_timestamp() -> int:
   return int(time())
+
+def filter_string(input_str):
+  # Define the regular expression pattern
+  pattern = re.compile('[A-Za-z0-9]+')
+  
+  # Use the pattern to find all matches in the input string
+  matches = pattern.findall(input_str)
+  
+  # Combine the matches into a single string
+  filtered_str = ''.join(matches)
+  
+  return filtered_str
