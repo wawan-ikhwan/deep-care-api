@@ -153,7 +153,7 @@ async def inference(request: Request):
             }
 
 @app.get("/inference/{admission_id}")
-async def get_inference_data(admission_id: int):
+async def get_inference_data(admission_id: str):
   try:
     model_output_list = []
     for key, value in db.child("admissions").child(admission_id).get().val().items():
