@@ -159,16 +159,14 @@ async def get_inference_data():
     model_output_list = []
     tempAdmissionTable = db.child("admissions")
     for key, value in tempAdmissionTable.get().val().items():
-      current_modelOutput = {}
-      current_modelOutput['admission_id'] = key
-      # nested_modelOutput = {}
-      nested_ouput_list = []
-      for keyNested, valueNested in value:
-        nested_modelOutput = valueNested.get("model_output", {})
+      for keyNested in value:
+        nested_modelOutput = {}
+        nested_modelOutput['admission_id'] = key
+        nested_modelOutput['los'] = value[keyNested]['model_output']['los']
+        nested_modelOutput['mortality'] = value[keyNested]['model_output']['mortality']
+        nested_modelOutput['readmission'] = value[keyNested]['model_output']['readmission']
         nested_modelOutput['timestamp'] = datetime.utcfromtimestamp(int(keyNested))
-        nested_ouput_list.append(nested_modelOutput)
-      current_modelOutput['model_output'] = nested_ouput_list
-      model_output_list.append(current_modelOutput)
+        model_output_list.append(nested_modelOutput)
     return model_output_list
   except Exception as e:
     return  {
