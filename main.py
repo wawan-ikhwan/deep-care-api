@@ -153,20 +153,24 @@ async def inference(request: Request):
               "message": str(e)
             }
 
-@app.get("/inference/{admission_id}")
-async def get_inference_data(admission_id: str):
-
+@app.get("/inference")
+async def get_inference_data():
   admission_id = filter_string(admission_id)
   try:
     model_output_list = []
-    for key, value in db.child("admissions").get().val().items():
-      current_modelInput = value.get("model_input", {})
-      current_modelInput['timestamp'] = datetime.utcfromtimestamp(int(key))
-      model_output_list.append(current_modelInput)
-    return {
-      "admission_id": admission_id,
-      "model_output": model_output_list
-    }
+    tempAdmissionTable = db.child("admissions")
+    for key, value in tempAdmissionTable.get().val().items():
+      current_modelOutput = {}
+      current_modelOutput['admission_id'] = key
+      # nested_modelOutput = {}
+      nested_ouput_list = []
+      for keyNested, valueNested in value:
+        nested_modelOutput = valueNested.get("model_output", {})
+        nested_modelOutput['timestamp'] = datetime.utcfromtimestamp(int(keyNested))
+        nested_ouput_list.append(nested_modelOutput)
+      current_modelOutput['model_output'] = nested_ouput_list
+      model_output_list.append(current_modelOutput)
+    return model_output_list
   except Exception as e:
     return  {
               "error": True,
