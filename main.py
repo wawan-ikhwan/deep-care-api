@@ -155,7 +155,6 @@ async def inference(request: Request):
 
 @app.get("/inference")
 async def get_inference_data():
-  admission_id = filter_string(admission_id)
   try:
     model_output_list = []
     tempAdmissionTable = db.child("admissions")
